@@ -51,7 +51,7 @@ tasks.withType<Test> {
 
 // bootBuildImage 태스크의 설정을 수정
 tasks.named<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
-	imageName = "docker.io/yourusername/springboot-app:latest"
-	builder = "paketobuildpacks/builder:base"
-	environment = mapOf("BP_JVM_VERSION" to "17")
+	imageName = "todolist:latest"
+//	builder = "paketobuildpacks/builder:full"  // 기본 builder 대신 full builder 사용
+//	environment = mapOf("BP_JVM_VERSION" to "17")
 }
