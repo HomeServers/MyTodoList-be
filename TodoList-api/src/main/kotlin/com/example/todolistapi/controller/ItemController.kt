@@ -1,6 +1,7 @@
 package com.example.todolistapi.controller
 
 import com.example.todolistapi.controller.requests.item.ItemRequest
+import com.example.todolistapi.dto.ItemDto
 import com.example.todolistapi.entity.Item
 import com.example.todolistapi.service.ItemService
 import org.springframework.http.HttpStatus
@@ -14,7 +15,7 @@ class ItemController(
     private val itemService: ItemService,
 ) {
     @GetMapping
-    fun getItems(): ResponseEntity<List<Item>> {
+    fun getItems(): ResponseEntity<List<ItemDto>> {
         val response = itemService.getItems()
         return ResponseEntity(response, HttpStatus.OK)
     }
