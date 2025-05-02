@@ -26,7 +26,7 @@ class ItemService(
             content = request.content ?: "",
             hash = request.hash ?: UUID.randomUUID().toString(),
             status = request.status ?: ItemStatus.PENDING,
-            expiredAt = request.expiredAt
+            dueDate = request.dueDate
         )
         return itemRepository.save(item)
     }
@@ -34,6 +34,12 @@ class ItemService(
     @Transactional
     fun updateItem(itemId: Long, request: ItemRequest) {
         val item = itemRepository.findById(itemId).orElseThrow { NotFoundException() }
-        item.update(request.content, request.status, request.expiredAt)
+        item.update(request.content, request.status, request.dueDate)
+    }
+
+    @Transactional
+    fun expireItem(itemId: Long) {
+        val item = itemRepository.findById(itemId).orElseThrow { NotFoundException() }
+        item.expire()
     }
 }

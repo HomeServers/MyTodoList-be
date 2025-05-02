@@ -1,14 +1,14 @@
 package com.example.todolistapi.entity
 
 import jakarta.persistence.*
-import java.time.Instant
+import java.time.LocalDateTime
 
 @Entity
 class Item(
     content: String,
     hash: String,
     status: ItemStatus,
-    expiredAt: Instant?
+    dueDate: LocalDateTime?
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +23,13 @@ class Item(
     var status = status
         protected set
 
-    var expiredAt = expiredAt
+    var dueDate = dueDate
         protected set
 
-    fun update(content: String?, status: ItemStatus?, expiredAt: Instant?) {
+    fun update(content: String?, status: ItemStatus?, dueDate: LocalDateTime?) {
         updateContent(content)
         updateStatus(status)
-        updateExpiredAt(expiredAt)
+        updateDueDate(dueDate)
     }
 
     fun updateContent(content: String?) {
@@ -44,15 +44,20 @@ class Item(
         }
     }
 
-    fun updateExpiredAt(expiredAt: Instant?) {
-        expiredAt?.let {
-            this.expiredAt = expiredAt
+    fun updateDueDate(dueDate: LocalDateTime?) {
+        dueDate?.let {
+            this.dueDate = dueDate
         }
+    }
+
+    fun expire() {
+        this.status = ItemStatus.EXPIRED
     }
 }
 
 enum class ItemStatus {
     PENDING,
     IN_PROGRESS,
-    COMPLETED
+    COMPLETED,
+    EXPIRED,
 }
