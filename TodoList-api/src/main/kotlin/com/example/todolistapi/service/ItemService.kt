@@ -6,13 +6,14 @@ import com.example.todolistapi.entity.Item
 import com.example.todolistapi.entity.ItemStatus
 import com.example.todolistapi.repository.ItemRepository
 import jakarta.transaction.Transactional
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
 class ItemService(
-    private val itemRepository: ItemRepository
+    private val itemRepository: ItemRepository,
 ) {
     fun getItems(): List<ItemDto> {
         return itemRepository.findAll().map {
@@ -39,6 +40,7 @@ class ItemService(
 
     @Transactional
     fun expireItem(itemId: Long) {
+        println("ItemService.expireItem")
         val item = itemRepository.findById(itemId).orElseThrow { NotFoundException() }
         item.expire()
     }
