@@ -19,8 +19,8 @@ class ExpireItemEventHandler(
 
     @Transactional
     @EventListener(ExpireItemEvent::class)
-    fun handle2(event: ExpireItemEvent) {
-        println("ExpireItemEventHandler.handle2")
+    fun execute(event: ExpireItemEvent) {
+        logger.debug("Expire item by event = {name: ${event.javaClass.simpleName}, hash: ${event.eventHash}, time: ${event.eventTime}")
         val content = objectMapper.writeValueAsString(event)
         try {
             itemService.expireItem(event.identifier) // unit execute -> batch
@@ -32,7 +32,7 @@ class ExpireItemEventHandler(
             )
             eventMessageRepository.save(message)
         } catch (e: RuntimeException) {
-            logger.error("error on ItemService.expireItem", e)
+            logger.error("Exception on ItemService.expireItem", e)
 
             val message = EventMessage(
                 content = content,
