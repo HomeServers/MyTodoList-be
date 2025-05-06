@@ -1,21 +1,35 @@
 package com.example.todolistapi.entity
 
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 class Item(
-    var content: String,
-    val hash: String,
-    @Enumerated(EnumType.STRING)
-    var status: ItemStatus
+    content: String,
+    hash: String,
+    status: ItemStatus,
+    dueDate: LocalDateTime?
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long = 0
+    val id: Long = 0
 
-    fun update(content: String?, status: ItemStatus?) {
+    var content = content
+        protected set
+
+    val hash = hash
+
+    @Enumerated(EnumType.STRING)
+    var status = status
+        protected set
+
+    var dueDate = dueDate
+        protected set
+
+    fun update(content: String?, status: ItemStatus?, dueDate: LocalDateTime?) {
         updateContent(content)
         updateStatus(status)
+        updateDueDate(dueDate)
     }
 
     fun updateContent(content: String?) {
@@ -29,10 +43,21 @@ class Item(
             this.status = status
         }
     }
+
+    fun updateDueDate(dueDate: LocalDateTime?) {
+        dueDate?.let {
+            this.dueDate = dueDate
+        }
+    }
+
+    fun expire() {
+        this.status = ItemStatus.EXPIRED
+    }
 }
 
 enum class ItemStatus {
     PENDING,
     IN_PROGRESS,
-    COMPLETED
+    COMPLETED,
+    EXPIRED,
 }
