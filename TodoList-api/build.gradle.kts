@@ -30,6 +30,7 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 //	nativeImage("org.springframework.boot:spring-boot-native-configuration")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 
 }
 
