@@ -7,6 +7,7 @@ import com.example.todolistapi.service.ItemService
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,24 +16,28 @@ class ItemController(
     private val itemService: ItemService,
 ) {
     @GetMapping
-    fun getItems(): ResponseEntity<List<ItemDto>> {
-        val response = itemService.getItems()
+    fun getItems(
+        @AuthenticationPrincipal principal: String
+    ): ResponseEntity<List<ItemDto>> {
+        val response = itemService.getItems(principal)
         return ResponseEntity(response, HttpStatus.OK)
     }
 
     @PostMapping
     fun createItem(
+        @AuthenticationPrincipal principal: String,
         @RequestBody request: ItemRequest
     ): ResponseEntity<Item> {
-        val response = itemService.createItem(request)
+        val response = itemService.createItem(principal, request)
         return ResponseEntity(response, CREATED)
     }
 
     @PutMapping("/{itemId}")
     fun updateItem(
+        @AuthenticationPrincipal principal: String,
         @PathVariable("itemId") itemId: Long,
         @RequestBody request: ItemRequest
     ) {
-        itemService.updateItem(itemId, request)
+        itemService.updateItem(principal, itemId, request)
     }
 }

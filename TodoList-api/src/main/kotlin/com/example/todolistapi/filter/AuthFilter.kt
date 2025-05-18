@@ -19,10 +19,12 @@ class AuthFilter : OncePerRequestFilter() {
         filterChain: FilterChain
     ) {
         val authValue = request.getHeader("Authorization")
-        val accessToken = authValue.split(" ")[1]
-        MDC.put("auth", accessToken)
-        val authToken = UsernamePasswordAuthenticationToken(accessToken, accessToken)
-        SecurityContextHolder.getContext().authentication = authToken
+        if (authValue != null) {
+            val accessToken = authValue.split(" ")[1]
+            MDC.put("auth", accessToken)
+            val authToken = UsernamePasswordAuthenticationToken(accessToken, accessToken)
+            SecurityContextHolder.getContext().authentication = authToken
+        }
 
         filterChain.doFilter(request, response)
     }

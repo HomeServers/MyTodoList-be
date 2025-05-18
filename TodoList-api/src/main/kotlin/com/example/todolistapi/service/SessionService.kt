@@ -1,8 +1,10 @@
 package com.example.todolistapi.service
 
+import com.example.todolistapi.dto.SessionDto
 import com.example.todolistapi.entity.Session
 import com.example.todolistapi.repository.SessionRepository
 import com.example.todolistapi.repository.UserRepository
+import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -34,5 +36,11 @@ class SessionService(
 
         val accessToken = session.refresh()
         return accessToken
+    }
+
+    @Transactional(readOnly = true)
+    fun getSession(token: String): SessionDto {
+        val session = sessionRepository.findByAccessToken(token) ?: throw ChangeSetPersister.NotFoundException()
+        return SessionDto.from(session)
     }
 }

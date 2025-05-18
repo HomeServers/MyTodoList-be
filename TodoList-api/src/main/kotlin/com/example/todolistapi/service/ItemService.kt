@@ -5,6 +5,7 @@ import com.example.todolistapi.dto.ItemDto
 import com.example.todolistapi.entity.Item
 import com.example.todolistapi.entity.ItemStatus
 import com.example.todolistapi.repository.ItemRepository
+import com.example.todolistapi.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.stereotype.Service
@@ -13,9 +14,13 @@ import java.util.UUID
 @Service
 class ItemService(
     private val itemRepository: ItemRepository,
+    private val sessionService: SessionService,
+    private val userRepository: UserRepository,
 ) {
-    fun getItems(): List<ItemDto> {
-        return itemRepository.findAll().map {
+    fun getItems(principal: String): List<ItemDto> {
+        val session = sessionService.getSession(principal)
+        val userId = session.userId
+        return itemRepository.findAllByUserId(userId).map {
             ItemDto.from(it)
         }
     }
@@ -27,25 +32,32 @@ class ItemService(
     }
 
     @Transactional
-    fun createItem(request: ItemRequest): Item {
+    fun createItem(principal: String, request: ItemRequest): Item {
+        val session = sessionService.getSession(principal)
+        val userId = session.userId
+        val author = userRepository.findById(userId).orElseThrow { NotFoundException() }
+
         val item = Item(
             content = request.content ?: "",
             hash = request.hash ?: UUID.randomUUID().toString(),
             status = request.status ?: ItemStatus.PENDING,
-            dueDate = request.dueDate
+            dueDate = request.dueDate,
+            user = author
         )
         return itemRepository.save(item)
     }
 
     @Transactional
-    fun updateItem(itemId: Long, request: ItemRequest) {
-        val item = itemRepository.findById(itemId).orElseThrow { NotFoundException() }
+    fun updateItem(principal: String, itemId: Long, request: ItemRequest) {
+        val session = sessionService.getSession(principal)
+        val userId = session.userId
+
+        val item = itemRepository.findByIdAndUserId(itemId, userId) ?: throw NotFoundException()
         item.update(request.content, request.status, request.dueDate)
     }
 
     @Transactional
     fun expireItem(itemId: Long) {
-        println("ItemService.expireItem")
         val item = itemRepository.findById(itemId).orElseThrow { NotFoundException() }
         item.expire()
     }
