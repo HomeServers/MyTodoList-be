@@ -32,7 +32,7 @@ class ItemService(
     }
 
     @Transactional
-    fun createItem(principal: String, request: ItemRequest): Item {
+    fun createItem(principal: String, request: ItemRequest): ItemDto {
         val session = sessionService.getSession(principal)
         val userId = session.userId
         val author = userRepository.findById(userId).orElseThrow { NotFoundException() }
@@ -44,7 +44,8 @@ class ItemService(
             dueDate = request.dueDate,
             user = author
         )
-        return itemRepository.save(item)
+        val persistedItem = itemRepository.save(item)
+        return ItemDto.from(persistedItem)
     }
 
     @Transactional
@@ -60,5 +61,15 @@ class ItemService(
     fun expireItem(itemId: Long) {
         val item = itemRepository.findById(itemId).orElseThrow { NotFoundException() }
         item.expire()
+    }
+
+    @Transactional
+    fun removeItem(principal: String, itemId: Long): Long {
+        val session = sessionService.getSession(principal)
+        val userId = session.userId
+
+        val item = itemRepository.findByIdAndUserId(itemId, userId) ?: throw NotFoundException()
+        itemRepository.delete(item)
+        return item.id
     }
 }
