@@ -1,0 +1,50 @@
+# Git 관련
+.git
+.gitignore
+.gitattributes
+
+# IDE 설정
+.idea
+.vscode
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings
+
+# 빌드 결과물 (build/libs는 제외하지 않음 - JAR 파일 필요)
+build/classes
+build/generated
+build/resources
+build/reports
+build/test-results
+build/tmp
+out
+target
+bin
+
+# Gradle 캐시
+.gradle
+
+# 로그 파일
+*.log
+
+# 임시 파일
+*.tmp
+*.temp
+*.swp
+*~
+
+# OS 파일
+.DS_Store
+Thumbs.db
+
+# 문서 및 스크립트
+*.md
+*.sh
+README*
+
+# 설정 파일 (필요시 주석 해제)
+# application-local.yml
+# application-dev.yml
