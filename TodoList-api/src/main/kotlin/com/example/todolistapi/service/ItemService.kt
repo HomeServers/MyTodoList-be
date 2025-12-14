@@ -25,6 +25,15 @@ class ItemService(
         }
     }
 
+    /**
+     * Item Entity 목록 조회 (iCalendar export용)
+     */
+    fun getItemEntities(principal: String): List<Item> {
+        val session = sessionService.getSession(principal)
+        val userId = session.userId
+        return itemRepository.findAllByUserId(userId)
+    }
+
     fun getItems(status: List<ItemStatus>): List<ItemDto> {
         return itemRepository.findAllByStatusIn(status).map {
             ItemDto.from(it)
@@ -71,5 +80,25 @@ class ItemService(
         val item = itemRepository.findByIdAndUserId(itemId, userId) ?: throw NotFoundException()
         itemRepository.delete(item)
         return item.id
+    }
+
+    /**
+     * Import된 데이터로 Item 생성
+     */
+    @Transactional
+    fun createItemFromImport(principal: String, data: ImportedItemData): ItemDto {
+        val session = sessionService.getSession(principal)
+        val userId = session.userId
+        val author = userRepository.findById(userId).orElseThrow { NotFoundException() }
+
+        val item = Item(
+            content = data.content,
+            hash = data.hash,
+            status = data.status,
+            dueDate = data.dueDate,
+            user = author
+        )
+        val persistedItem = itemRepository.save(item)
+        return ItemDto.from(persistedItem)
     }
 }

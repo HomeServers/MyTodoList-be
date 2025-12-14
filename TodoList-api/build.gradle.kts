@@ -32,6 +32,9 @@ dependencies {
 //	nativeImage("org.springframework.boot:spring-boot-native-configuration")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 
+	// RFC 5545 (iCalendar) support
+	implementation("org.mnode.ical4j:ical4j:3.2.14")
+
 }
 
 kotlin {
