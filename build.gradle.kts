@@ -35,6 +35,8 @@ dependencies {
 	// RFC 5545 (iCalendar) support
 	implementation("org.mnode.ical4j:ical4j:3.2.14")
 
+	// actuator
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
 
 kotlin {

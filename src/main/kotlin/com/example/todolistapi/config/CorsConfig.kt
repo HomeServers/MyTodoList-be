@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class CorsConfig : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**") // 모든 경로에 대해
-            .allowedOrigins("http://localhost:3000", "http://todo.nuhgnod.site", "https://todo.nuhgnod.site") // local
+            .allowedOrigins("http://localhost:3030", "http://localhost:3000", "http://todo.nuhgnod.site", "https://todo.nuhgnod.site", "https://www.todo.nuhgnod.site") // local
             .allowedHeaders("*") // 모든 헤더 허용
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
             .allowCredentials(true) // 쿠키 사용 허용 여부
