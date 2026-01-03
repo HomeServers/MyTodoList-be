@@ -66,3 +66,27 @@ jobs:
 
     - name: Image digest
       run: echo "${{ steps.build.outputs.digest }}"
+
+    - name: Update K8s manifest in infrastructure repo
+      env:
+        GH_TOKEN: ${{ secrets.INFRA_REPO_TOKEN }}
+      run: |
+        # Extract version from tag
+        VERSION=${GITHUB_REF#refs/tags/v}
+
+        # Clone infrastructure repository
+        git clone https://github.com/${{ secrets.DOCKER_USERNAME }}/MyTodoList-infra.git
+        cd MyTodoList-infra
+
+        # Update image tag in kustomization
+        cd base
+
+        # Update backend image tag using sed
+        sed -i "s|newTag: .*|newTag: ${VERSION}|g" kustomization.yaml
+
+        # Commit and push
+        git config user.name "GitHub Actions Bot"
+        git config user.email "actions@github.com"
+        git add kustomization.yaml
+        git commit -m "Update backend image to ${VERSION}"
+        git push https://x-access-token:${GH_TOKEN}@github.com/${{ secrets.DOCKER_USERNAME }}/MyTodoList-infra.git main
